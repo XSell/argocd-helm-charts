@@ -63,3 +63,7 @@ base:
   
   volume:
     volumeSize: "5Gi"
+
+  configmap:
+    JAVA_OPTIONS: --add-opens=java.base/java.nio=ALL-UNNAMED
+    LOGGING_LEVEL_ROOT: INFO

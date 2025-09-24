@@ -26,6 +26,10 @@
 
 	helm repo add argocd-helm-charts https://raw.githubusercontent.com/XSell/argocd-helm-charts/gh-pages  
 
+-- check if works
+
+	helm repo update  
+
 -- pull
 
 	helm dependency build  
