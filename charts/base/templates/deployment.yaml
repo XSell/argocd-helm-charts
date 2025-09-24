@@ -34,10 +34,16 @@ spec:
             memory: {{ .Values.deployment.limits_memory | default "256Mi" }}
             ephemeral-storage: {{ .Values.deployment.limits_ephemeral_storage | default "1Gi" }}
             cpu: {{ .Values.deployment.limits_cpu | default "500m" }}
-        {{- if  .Values.external_secrets }}
+        {{- if  or .Values.external_secrets .Values.configmap }}
         envFrom:
+          {{- if  .Values.external_secrets }}
           - secretRef:
               name: {{ .Release.Name }}
+          {{ end  }}
+          {{- if  .Values.configmap }}
+          - configMapRef:
+              name: {{ .Release.Name }}
+          {{ end  }}
         {{ end  }}
         ports:
         - containerPort: {{ .Values.deployment.port | default 3000 }}
