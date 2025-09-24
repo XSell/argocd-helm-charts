@@ -2,13 +2,13 @@ apiVersion: v1
 entries:
   base:
   - apiVersion: v2
-    appVersion: 1.0.2
-    created: "2025-09-08T19:29:30.371583731Z"
+    appVersion: 1.0.3
+    created: "2025-09-24T19:55:56.257863024Z"
     description: base helm chart for kubernetes
-    digest: 05814497710f4d455a656e8d3317fdc94298a3ad2dd810937420e5727827c3fe
+    digest: a5701b7b50b7b94de030935846358a75884ade178eee5814da349f78328cc8bc
     name: base
     type: application
     urls:
-    - base-1.0.2.tgz
-    version: 1.0.2
-generated: "2025-09-08T19:29:30.37158843Z"
+    - base-1.0.3.tgz
+    version: 1.0.3
+generated: "2025-09-24T19:55:56.257868795Z"
