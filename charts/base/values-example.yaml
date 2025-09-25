@@ -10,11 +10,11 @@ deployment:
   tag: "1.0.0"
   #
   ports:
-  - name: http
-    containerPort: 8080
+  - prometheus: http
+    containerPort: 8088
     protocol: TCP
-  - name: metrics
-    containerPort: 9090
+  - name: app
+    containerPort: 8080
     protocol: TCP
   #
   service_type: ClusterIP
@@ -60,18 +60,18 @@ deployment:
 #  minAvailable: 1
 #  maxUnavailable: 1
 
-ingress_nginx_external:
-  url: dummy.test.com
-  port: 8080 # use only to set default backend
-  rules: # use for multiples path
-  - path: /api
-    port: 8080
-  - path: /
-    port: 80
-  annotations:
-    nginx.ingress.kubernetes.io/affinity: cookie
-    nginx.ingress.kubernetes.io/proxy-body-size: 20m
-    nginx.ingress.kubernetes.io/session-cookie-hash: sha2
+#ingress_nginx_external:
+#  url: dummy.test.com
+#  port: 8080 # use only to set default backend
+#  rules: # use for multiples path
+#  - path: /api
+#    port: 8080
+#  - path: /
+#    port: 80
+#  annotations:
+#    nginx.ingress.kubernetes.io/affinity: cookie
+#    nginx.ingress.kubernetes.io/proxy-body-size: 20m
+#    nginx.ingress.kubernetes.io/session-cookie-hash: sha2
 
 #ingress_nginx_internal:
 #  url: dummy.test-internal.com
