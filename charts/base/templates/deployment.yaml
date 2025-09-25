@@ -46,27 +46,16 @@ spec:
           {{ end  }}
         {{ end  }}
         ports:
-        - containerPort: {{ .Values.deployment.port | default 3000 }}
-        {{- if .Values.probes }}
-        livenessProbe:
-          httpGet:
-            path: {{ .Values.probes.path | default "/health" }}
-            port: {{ .Values.deployment.port | default 3000 }}
-          initialDelaySeconds: {{ .Values.probes.initialDelaySeconds | default "10" }}
-          periodSeconds: {{ .Values.probes.periodSeconds | default "10" }}
-          timeoutSeconds: {{ .Values.probes.timeoutSeconds | default "10" }}
-          successThreshold: {{ .Values.probes.successThreshold | default "1" }}
-          failureThreshold: {{ .Values.probes.failureThreshold | default "3" }}
-        readinessProbe:
-          httpGet:
-            path: {{ .Values.probes.path | default "/health" }}
-            port: {{ .Values.deployment.port | default 3000 }}
-          initialDelaySeconds: {{ .Values.probes.initialDelaySeconds | default "10" }}
-          periodSeconds: {{ .Values.probes.periodSeconds | default "10" }}
-          timeoutSeconds: {{ .Values.probes.timeoutSeconds | default "10"  }}
-          successThreshold: {{ .Values.probes.successThreshold | default "1"  }}
-          failureThreshold: {{ .Values.probes.failureThreshold | default "3"  }}
-        {{ end }}
+        {{- range .Values.deployment.ports }}
+        - name: {{ .name }}
+          containerPort: {{ .containerPort }}
+          protocol: {{ .protocol | default "TCP" }}
+        {{- end }}
+        #
+        {{- with .Values.deployment.probes }}
+          {{- toYaml . | nindent 8 }}
+        {{ end  }}
+        #
         {{- if .Values.volume }}
         volumeMounts:
           - name: {{ .Release.Name }}

@@ -5,8 +5,8 @@ on:
   push:
     branches:
       - main
-    #paths:
-    #  - 'charts/**'
+    paths:
+      - 'charts/**'
 
 permissions:
   id-token: write 
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Checkout del código
+      - name: Checkout the code
         uses: actions/checkout@v4
         
       - name: Configurar Credenciales de AWS (OIDC)
@@ -34,25 +34,25 @@ jobs:
         with:
           version: v3.4.0
 
-      - name: Empaquetar Charts
+      - name: Zip Charts
         shell: bash
         run: |
               CHART_DIR="charts"
               for chart in $CHART_DIR/*; do
                 if [ -d "$chart" ]; then
-                  echo "Empaquetando chart en: $chart"
+                  echo "Zip chart in: $chart"
                   helm package "$chart"
                 fi
               done
           
-      - name: Descargar index.yaml existente desde S3
+      - name: Download index.yaml existing from S3
         shell: bash
         env:
           S3_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
         run: |
-              aws s3 cp s3://$S3_BUCKET_NAME }}/index.yaml index.yaml || echo "index.yaml no encontrado, se creará uno nuevo."
+              aws s3 cp s3://$S3_BUCKET_NAME }}/index.yaml index.yaml || echo "index.yaml not found, a new one will be created."
           
-      - name: Generar/Actualizar index.yaml
+      - name: Generate/Update index.yaml
         shell: bash
         env:
           S3_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
@@ -64,13 +64,13 @@ jobs:
         run: |
               ls -las 
 
-      - name: Sincronizar Charts y Index con S3
+      - name: Synchronize Charts and Index with S3
         shell: bash
         env:
           S3_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
         run: |
               aws s3 sync . s3://$S3_BUCKET_NAME --exclude "*" --include "*.tgz" --include "index.yaml" 
 
-      - name: Limpiar archivos empaquetados
+      - name: Clean packed files
         shell: bash
         run: rm -f *.tgz index.yaml

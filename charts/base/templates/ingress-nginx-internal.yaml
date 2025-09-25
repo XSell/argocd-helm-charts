@@ -13,17 +13,31 @@ metadata:
   name: {{ .Release.Name }}
 spec:
   ingressClassName: nginx-internal
+  {{- if  .Values.ingress_nginx_internal.port }}
+  defaultBackend:
+    service:
+      name: {{ .Release.Name }}
+      port:
+        number: {{ .Values.ingress_nginx_internal.port }}
+  {{ end }}
+  
+  {{- if  .Values.ingress_nginx_internal.rules }}
   rules:
   - host: {{ .Values.ingress_nginx_internal.url }}
     http:
       paths:
-      - backend:
-          service:
-            name: {{ .Release.Name }}
-            port:
-              number: {{ .Values.deployment.port | default 3000 }}
-        path: /
+      {{- range .Values.ingress_nginx_internal.rules }}
+      - path: {{ .path }}
         pathType: Prefix
+        backend:
+          service:
+            name: {{ $.Release.Name }}
+            port:
+              number: {{ .port }}
+      {{ end }}
+
+  {{ end }}
+
 {{- if  .Values.ingress_nginx_internal.tls }}
   tls:
   - hosts:
