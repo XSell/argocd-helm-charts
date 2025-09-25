@@ -1,0 +1,71 @@
+---
+name: Public Helm Chart on S3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'charts/**'
+
+permissions:
+  id-token: write 
+  contents: read  
+
+env:
+  S3_BUCKET_NAME: argocd-helm-charts-811107706569
+
+jobs:
+  release-chart:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout del código
+        uses: actions/checkout@v4
+        
+      - name: Configurar Credenciales de AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::811107706569:role/argocd-helm-charts-github-role
+          aws-region: us-east-1
+
+      - name: Instalar Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: '3'
+
+      - name: Empaquetar Charts
+        shell: bash
+        run: |
+              CHART_DIR="charts"
+              for chart in $CHART_DIR/*; do
+                if [ -d "$chart" ]; then
+                  echo "Empaquetando chart en: $chart"
+                  helm package "$chart"
+                fi
+              done
+          
+      - name: Descargar index.yaml existente desde S3
+        shell: bash
+        env:
+          S3_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
+        run: |
+              aws s3 cp s3://$S3_BUCKET_NAME }}/charts/index.yaml index.yaml || echo "index.yaml no encontrado, se creará uno nuevo."
+          
+      - name: Generar/Actualizar index.yaml
+        shell: bash
+        env:
+          S3_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
+        run: |
+              helm repo index . --url "https://$S3_BUCKET_NAME.s3.amazonaws.com/charts" --merge index.yaml
+
+      - name: Sincronizar Charts y Index con S3
+        shell: bash
+        env:
+          S3_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
+        run: |
+              aws s3 sync . s3://$S3_BUCKET_NAME/charts/ --exclude "*" --include "*.tgz" --include "index.yaml" 
+
+      - name: Limpiar archivos empaquetados
+        shell: bash
+        run: rm -f *.tgz index.yaml
