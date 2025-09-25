@@ -29,10 +29,10 @@ jobs:
           role-to-assume: arn:aws:iam::811107706569:role/argocd-helm-charts-github-role
           aws-region: us-east-1
 
-      - name: Instalar Helm
-        uses: azure/setup-helm@v4
+      - name: Install Helm
+        uses: azure/setup-helm@v1
         with:
-          version: '3'
+          version: v3.4.0
 
       - name: Empaquetar Charts
         shell: bash
