@@ -50,21 +50,26 @@ jobs:
         env:
           S3_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
         run: |
-              aws s3 cp s3://$S3_BUCKET_NAME }}/charts/index.yaml index.yaml || echo "index.yaml no encontrado, se creará uno nuevo."
+              aws s3 cp s3://$S3_BUCKET_NAME }}/index.yaml index.yaml || echo "index.yaml no encontrado, se creará uno nuevo."
           
       - name: Generar/Actualizar index.yaml
         shell: bash
         env:
           S3_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
         run: |
-              helm repo index . --url "https://$S3_BUCKET_NAME.s3.amazonaws.com/charts" --merge index.yaml
+              helm repo index . --url "https://$S3_BUCKET_NAME.s3.amazonaws.com" --merge index.yaml
+
+      - name: Paquetes creados
+        shell: bash
+        run: |
+              ls -las 
 
       - name: Sincronizar Charts y Index con S3
         shell: bash
         env:
           S3_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
         run: |
-              aws s3 sync . s3://$S3_BUCKET_NAME/charts/ --exclude "*" --include "*.tgz" --include "index.yaml" 
+              aws s3 sync . s3://$S3_BUCKET_NAME --exclude "*" --include "*.tgz" --include "index.yaml" 
 
       - name: Limpiar archivos empaquetados
         shell: bash
