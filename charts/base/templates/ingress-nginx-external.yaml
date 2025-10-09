@@ -6,35 +6,40 @@ metadata:
   labels:
     app: {{ $.Release.Name }}
     helm.sh/chart: {{ $.Chart.Version  }}
+  #
   {{- with .Values.ingress_nginx_external.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{ end  }}
+  #
   name: {{ .Release.Name }}
 spec:
   ingressClassName: nginx
+  #
   {{- if  .Values.ingress_nginx_external.port }}
   defaultBackend:
     service:
-      name: {{ .Release.Name }}
+      name: {{ .Values.deployment.service_name | default $.Release.Name }}
       port:
         number: {{ .Values.ingress_nginx_external.port }}
   {{ end }}
+  #
   {{- if  .Values.ingress_nginx_external.rules }}
   rules:
   - host: {{ .Values.ingress_nginx_external.url }}
     http:
       paths:
+      #
       {{- range .Values.ingress_nginx_external.rules }}
       - path: {{ .path }}
         pathType: Prefix
         backend:
           service:
-            name: {{ $.Release.Name }}
+            name: {{ .service_name | default $.Release.Name }}
             port:
               number: {{ .port }}
       {{ end }}
-
+      #
   {{ end }}
-
+  #
 {{ end }}

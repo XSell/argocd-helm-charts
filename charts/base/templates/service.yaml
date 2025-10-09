@@ -3,20 +3,21 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{  $.Release.Name }}
+  name: {{ .Values.deployment.service_name | default $.Release.Name }}
   labels:
     app: {{ $.Release.Name }}
     helm.sh/chart: {{ $.Chart.Version  }}
 spec:
   type: {{ .Values.deployment.service_type | default "ClusterIP" }}
   ports:
+  #
   {{- range .Values.deployment.ports }}
   - name: {{ .name }}
     port: {{ .containerPort }}
     protocol: {{ .protocol | default "TCP" }}
     targetPort: {{ .containerPort }}
   {{- end }}
+  #
   selector:
     app: {{ $.Release.Name }}
-
 {{ end }}

@@ -10,7 +10,8 @@ metadata:
 spec:
   accessModes:
   - ReadWriteOnce
+  storageClassName: {{ .Values.volume.storageClassName | default "gp2" }}
   resources:
     requests:
-      storage: {{ .Values.volume.volumeSize }}
+      storage: {{ .Values.volume.volumeSize | default "10Gi" }}
 {{- end }}

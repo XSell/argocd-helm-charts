@@ -4,4 +4,4 @@ name: base
 description: base helm chart for kubernetes
 type: application
 appVersion: 1.0.0
-version: 1.0.1 # new versions changes only this
+version: 1.0.2 # new versions changes only this

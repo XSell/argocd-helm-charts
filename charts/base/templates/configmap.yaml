@@ -8,8 +8,9 @@ metadata:
     app: {{ $.Release.Name }}
     helm.sh/chart: {{ $.Chart.Version  }}
 data:
+  #
   {{- range $key, $value := .Values.configmap }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
-
+  #
 {{ end }}
