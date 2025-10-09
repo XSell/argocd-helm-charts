@@ -32,7 +32,7 @@ spec:
       #
       {{- range .Values.ingress_nginx_internal.rules }}
       - path: {{ .path }}
-        pathType: Prefix
+        pathType: {{ .pathType | default "Prefix" }}
         backend:
           service:
             name: {{ .service_name | default $.Release.Name }}

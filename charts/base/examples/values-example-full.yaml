@@ -18,7 +18,7 @@ deployment:
     containerPort: 8080
     protocol: TCP
   #
-  #service_name: dummy
+  service_name: dummy-svc
   #
   service_type: ClusterIP
   #
@@ -89,9 +89,11 @@ ingress_nginx_internal:
   - path: /api
     port: 8080
     service_name: pepe
+    pathType: ImplementationSpecific
   - path: /
     port: 80
     service_name: tete
+    pathType: ImplementationSpecific
   annotations:
     nginx.ingress.kubernetes.io/affinity: cookie
     nginx.ingress.kubernetes.io/proxy-body-size: 20m
